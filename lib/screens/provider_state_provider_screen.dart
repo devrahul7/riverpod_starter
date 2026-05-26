@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProviderStateProviderScreen extends StatelessWidget {
+
+  final appBarProvider =  Provider<String>((ref) {
+    return "Provider & StateProvider";
+  });
+
+  final appBarDescriptionProvider= Provider<String>((ref){
+    return "Provider is the most basic provider. It exposes a read-only value that cannot be changed from outside. Use it for constants, computed values, or dependency injection";
+  });
+
+  final appBarDes2Provider = Provider<String>((ref){
+    return 'StateProvider is a provider that exposes a simple mutable state. It is ideal for storing simple values like int, bool, String, or enum that can be modified from outside.';
+  });
+
+class ProviderStateProviderScreen extends ConsumerWidget {
   const ProviderStateProviderScreen({super.key});
 
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -31,12 +46,13 @@ class ProviderStateProviderScreen extends StatelessWidget {
                       icon: const Icon(Icons.arrow_back, color: Colors.white),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      "Provider & StateProvider",
+                     Text(
+                      ref.read(appBarProvider),
                       style: Theme.of(
                         context,
                       ).textTheme.titleLarge?.copyWith(color: Colors.white),
-                    ),
+                    )
+                 
                   ],
                 ),
               ),
@@ -49,13 +65,15 @@ class ProviderStateProviderScreen extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Provider is the most basic provider. It exposes a read-only value that cannot be changed from outside. Use it for constants, computed values, or dependency injection.',
+                  child: Consumer(builder: (context,ref,child){
+                   return Text( ref.read(appBarDescriptionProvider),
+                   
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14,
                       color: Colors.white,
                     ),
-                  ),
+                  );
+                  })
                 ),
               ),
               Card(
@@ -67,13 +85,15 @@ class ProviderStateProviderScreen extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'StateProvider is a provider that exposes a simple mutable state. It is ideal for storing simple values like int, bool, String, or enum that can be modified from outside.',
+                  child:  Text(
+                      ref.read(appBarDes2Provider),
+                    
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontSize: 14,
                       color: Colors.white,
                     ),
-                  ),
+                  )
+                 
                 ),
               ),
               Expanded(
