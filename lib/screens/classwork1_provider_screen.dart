@@ -1,7 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
-class Classwork1ProviderScreen extends StatelessWidget {
+final appBarProvider = Provider((ref) {
+  return "Classwork 1-Provider";
+});
+
+final resultProvider = StateProvider<double>((ref) {
+  return 0;
+});
+
+final num1Provider = Provider((ref) {
+  return "First Number 1";
+});
+final num2Provider = Provider((ref) {
+  return "Second Number 2";
+});
+
+class Classwork1ProviderScreen extends ConsumerStatefulWidget {
   const Classwork1ProviderScreen({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _Classwork1ProviderScreenState();
+}
+
+class _Classwork1ProviderScreenState
+    extends ConsumerState<Classwork1ProviderScreen> {
+  final firstController = TextEditingController();
+  final secondController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +59,8 @@ class Classwork1ProviderScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Classwork 1 - Provider',
+                      ref.read(appBarProvider),
+
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             color: Colors.white,
@@ -45,10 +73,11 @@ class Classwork1ProviderScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextFormField(
+                  controller: firstController,
                   keyboardType: TextInputType.number,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: 'Number 1',
+                    labelText: ref.read(num1Provider),
                     labelStyle: const TextStyle(color: Colors.white70),
                     hintText: 'Enter first number',
                     hintStyle: const TextStyle(color: Colors.white38),
@@ -69,10 +98,11 @@ class Classwork1ProviderScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextFormField(
+                  controller: secondController,
                   keyboardType: TextInputType.number,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: 'Number 2',
+                    labelText: ref.read(num2Provider),
                     labelStyle: const TextStyle(color: Colors.white70),
                     hintText: 'Enter second number',
                     hintStyle: const TextStyle(color: Colors.white38),
@@ -96,7 +126,14 @@ class Classwork1ProviderScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          final num1 =
+                              double.tryParse(firstController.text) ?? 0;
+                          final num2 =
+                              double.tryParse(secondController.text) ?? 0;
+
+                          ref.read(resultProvider.notifier).state = num1 + num2;
+                        },
                         icon: const Icon(Icons.add),
                         label: const Text('Add'),
                         style: ElevatedButton.styleFrom(
@@ -112,7 +149,14 @@ class Classwork1ProviderScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          final num1 =
+                              double.tryParse(firstController.text) ?? 0;
+                          final num2 =
+                              double.tryParse(secondController.text) ?? 0;
+
+                          ref.read(resultProvider.notifier).state = num1 - num2;
+                        },
                         icon: const Icon(Icons.remove),
                         label: const Text('Subtract'),
                         style: ElevatedButton.styleFrom(
@@ -135,7 +179,14 @@ class Classwork1ProviderScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          final num1 =
+                              double.tryParse(firstController.text) ?? 0;
+                          final num2 =
+                              double.tryParse(secondController.text) ?? 0;
+
+                          ref.read(resultProvider.notifier).state = num1 * num2;
+                        },
                         icon: const Icon(Icons.close),
                         label: const Text('Multiply'),
                         style: ElevatedButton.styleFrom(
@@ -151,7 +202,14 @@ class Classwork1ProviderScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          final num1 =
+                              double.tryParse(firstController.text) ?? 0;
+                          final num2 =
+                              double.tryParse(secondController.text) ?? 0;
+
+                          ref.read(resultProvider.notifier).state = num1 / num2;
+                        },
                         icon: const Icon(Icons.percent),
                         label: const Text('Divide'),
                         style: ElevatedButton.styleFrom(
@@ -184,12 +242,13 @@ class Classwork1ProviderScreen extends StatelessWidget {
                           style: TextStyle(color: Colors.white70, fontSize: 16),
                         ),
                         const SizedBox(height: 8),
+
                         Text(
-                          '0',
+                          ref.watch(resultProvider).toString(),
                           style: Theme.of(context).textTheme.displayMedium
                               ?.copyWith(color: Colors.white),
                         ),
-                      ],
+                      ],  
                     ),
                   ),
                 ),
