@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 
   final appBarProvider =  Provider<String>((ref) {
@@ -13,6 +14,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
   final appBarDes2Provider = Provider<String>((ref){
     return 'StateProvider is a provider that exposes a simple mutable state. It is ideal for storing simple values like int, bool, String, or enum that can be modified from outside.';
   });
+
+final counterProvider = StateProvider<int>((ref) {
+  return 100;
+  
+});
 
 class ProviderStateProviderScreen extends ConsumerWidget {
   const ProviderStateProviderScreen({super.key});
@@ -107,7 +113,7 @@ class ProviderStateProviderScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        '0',
+                        ref.watch(counterProvider).toString(),
                         style: Theme.of(
                           context,
                         ).textTheme.displayLarge?.copyWith(color: Colors.white),
@@ -125,21 +131,28 @@ class ProviderStateProviderScreen extends ConsumerWidget {
         children: [
           FloatingActionButton(
             heroTag: 'decrement',
-            onPressed: () {},
+            onPressed: () {
+              ref.read(counterProvider.notifier).state--;
+
+            },
             backgroundColor: Colors.red,
             child: const Icon(Icons.remove),
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
             heroTag: 'reset',
-            onPressed: () {},
+            onPressed: () {
+              ref.read(counterProvider.notifier).state =0;
+            },
             backgroundColor: Colors.grey,
             child: const Icon(Icons.refresh),
           ),
           const SizedBox(width: 16),
           FloatingActionButton(
             heroTag: 'increment',
-            onPressed: () {},
+            onPressed: () {
+              ref.read(counterProvider.notifier).state++;
+            },
             backgroundColor: Colors.green,
             child: const Icon(Icons.add),
           ),
