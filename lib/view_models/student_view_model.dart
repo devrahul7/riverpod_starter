@@ -14,9 +14,7 @@ class StudentViewModel extends Notifier<StudentState> {
 
   Future<void> addStudent(StudentModel student) async {
     // after adding
-    state = state.copyWith(
-      isLoading: true,
-    ); // load garaune yei bela state lai pani copy garne
+    state = state.copyWith( isLoading: true, ); // load garaune yei bela state lai pani copy garne
     await Future.delayed(const Duration(seconds: 2)); // load for 2 secs
     final updatedStudents = [...state.students, student];
     state = state.copyWith(
@@ -25,13 +23,22 @@ class StudentViewModel extends Notifier<StudentState> {
     ); //state lai update garaune
   }
 
+  Future<void> removeStudent(int index) async {
+    state = state.copyWith(isLoading: true);
+    await Future.delayed(const Duration(seconds: 2));
+    final updatedStudents = List<StudentModel>.from(state.students)
+    ..removeAt(index);
+    state = state.copyWith(isLoading: false, students: updatedStudents);
+  }
+
+
   Future<void> loadStudents() async {
     state = state.copyWith(isLoading: true);
     await Future.delayed(const Duration(seconds: 2));
     state = state.copyWith(isLoading: false);  // load student after 2 secs
   }
 
-  Future<void> clcearStudents() async {
+  Future<void> clearStudents() async {
     state = state.copyWith(isLoading: true);
     await Future.delayed(const Duration(seconds: 2));
     state = state.copyWith(isLoading: false, students: []);

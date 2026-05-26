@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_starter/models/student_model.dart';
+import 'package:riverpod_starter/view_models/student_view_model.dart';
 
 class NotifierProviderScreen extends ConsumerStatefulWidget {
   const NotifierProviderScreen({super.key});
@@ -17,6 +19,8 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    final studentState = ref.watch(studentViewModelProvider);
+    final studentVM = ref.read(studentViewModelProvider.notifier);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -32,6 +36,7 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
         ),
         child: SafeArea(
           child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -61,7 +66,9 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
                     child: Column(
                       children: [
                         TextFormField(
+                          controller: _fNameControlller,
                           decoration: InputDecoration(
+                            
                             labelText: 'First Name',
                             labelStyle: const TextStyle(color: Colors.white70),
                             filled: true,
@@ -79,6 +86,7 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
+                          controller: _lNameControlller,
                           decoration: InputDecoration(
                             labelText: 'Last Name',
                             labelStyle: const TextStyle(color: Colors.white70),
@@ -97,6 +105,7 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
                         ),
                         const SizedBox(height: 16),
                         TextFormField(
+                          controller: _dobControlller,
                           decoration: InputDecoration(
                             labelText: 'Date of Birth',
                             labelStyle: const TextStyle(color: Colors.white70),
@@ -118,7 +127,16 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+
+                              if(_formKey.currentState!.validate()){
+                                //create student object and add to provider
+
+                                final student = StudentModel(dob: _dobControlller.text, fName: _fNameControlller.text, lName: _lNameControlller.text);
+                                studentVM.addStudent(student);
+                              }
+
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.deepPurple,
@@ -137,10 +155,51 @@ class _NotifierProviderScreenState extends ConsumerState<NotifierProviderScreen>
                           ),
                         ),
                         const SizedBox(height: 32),
-                        const Text(
-                          'No Data',
-                          style: TextStyle(color: Colors.white70, fontSize: 16),
-                        ),
+                        studentState.isLoading 
+                        ? const CircularProgressIndicator(
+                          color: Colors.amber,
+
+                         )
+                         : studentState.students.isEmpty ?
+                         const Text(
+                          "No Students added Yet.",
+                         style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 16
+                         ),
+                         ) 
+                         : ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: studentState.students.length,
+                          itemBuilder: (context, index) {
+                            final student = studentState.students[index];
+                            return Card(
+                                        color: Colors.white.withValues(alpha: 0.15),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: ListTile(
+                                          leading: const CircleAvatar(
+                                            backgroundColor: Colors.amber,
+                                            child: Icon(Icons.school, color: Colors.black),
+                                          ),
+                                          title: Text(
+                                            '${student.fName} ${student.lName}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            'DOB: ${student.dob}',
+                                            style: const TextStyle(color: Colors.white70),
+                                          ),
+                                        ),
+                                      );
+
+                          },
+                         )
                       ],
                     ),
                   ),
